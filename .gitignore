@@ -1,0 +1,4 @@
+bin/
+*.exe
+contadores.csv
+config.json

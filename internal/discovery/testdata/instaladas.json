@@ -1,0 +1,32 @@
+{"Printers":[
+ {"Name":"Microsoft Print to PDF","PortName":"PORTPROMPT:","DriverName":"Microsoft Print To PDF","HostAddress":""},
+ {"Name":"EPSON L575 Series","PortName":"WSD-22a931fb-a0a2-4b28-96d7-a46496bb4dc7","DriverName":"Microsoft IPP Class Driver","HostAddress":""},
+ {"Name":"Brother PC-FAX v.3.2","PortName":"BRN0011223344AA","DriverName":"Brother PC-FAX v.3.2","HostAddress":"BRN0011223344AA"},
+ {"Name":"Brother MFC-L3780CDW series (Copiar 1)","PortName":"BRN0011223344AA","DriverName":"Brother MFC-L3780CDW series","HostAddress":"BRN0011223344AA"},
+ {"Name":"Brother MFC-L3780CDW series","PortName":"WSD-1e7cf44b-7428-41f2-b649-d8a3d694084c","DriverName":"Microsoft IPP Class Driver","HostAddress":""},
+ {"Name":"Brother DCP-T730DW Printer","PortName":"BRWAABBCCDDEE01","DriverName":"Brother DCP-T730DW Printer","HostAddress":"BRWAABBCCDDEE01"},
+ {"Name":"Brother DCP-L5650DN series [b4220000aa01]","PortName":"WSD-3e33d321-af54-4716-9633-2cfffa2c6f4c","DriverName":"Microsoft IPP Class Driver","HostAddress":""},
+ {"Name":"Brother HL-L2350DW","PortName":"192.168.0.50","DriverName":"Brother HL-L2350DW series","HostAddress":"192.168.0.50"},
+ {"Name":"Brother HL-1110","PortName":"USB001","DriverName":"Brother HL-1110 series","HostAddress":""},
+ {"Name":"Brother HL-5100DN","PortName":"IP_10.0.0.77","DriverName":"Brother HL-5100DN","HostAddress":""},
+ {"Name":"Brother DCP-1610W [a1b2c3d4e5f6]","PortName":"USB002","DriverName":"Brother DCP-1610W series","HostAddress":""},
+ {"Name":"Brother MFC-J6945DW Printer","PortName":"WSD-99999999-0000-0000-0000-000000000001","DriverName":"Brother MFC-J6945DW Printer","HostAddress":""},
+ {"Name":"Brother HL-L8360CDW series","PortName":"WSD-88888888-0000-0000-0000-000000000002","DriverName":"Brother HL-L8360CDW series","HostAddress":""}
+],
+"Devices":[
+ {"Id":"SWD\\PRINTENUM\\WSD-22a931fb-a0a2-4b28-96d7-a46496bb4dc7","Props":[{"Key":"DEVPKEY_NAME","Values":["Microsoft IPP Class Driver"]},{"Key":"DEVPKEY_Device_Parent","Values":["SWD\\IPP\\cfe92100-67c4-11d4-a45f-f8d027ace49d"]}]},
+ {"Id":"SWD\\PRINTENUM\\WSD-1e7cf44b-7428-41f2-b649-d8a3d694084c","Props":[{"Key":"DEVPKEY_NAME","Values":["Microsoft IPP Class Driver"]},{"Key":"DEVPKEY_Device_Parent","Values":"SWD\\IPP\\e3248000-80ce-11db-8000-0011223344aa"}]},
+ {"Id":"SWD\\PRINTENUM\\WSD-3e33d321-af54-4716-9633-2cfffa2c6f4c","Props":{"Key":"DEVPKEY_Device_Parent","Values":["SWD\\IPP\\e3248000-80ce-11db-8000-b4220000aa01"]}},
+ {"Id":"SWD\\IPP\\E3248000-80CE-11DB-8000-B4220000AA01","Props":[{"Key":"DEVPKEY_Device_FriendlyName","Values":["Brother DCP-L5650DN series [b4220000aa01]"]},{"Key":"{A35996AB-11CF-4935-8B61-A6761081ECDF} 12","Values":["http://10.0.0.104:631/ipp/print"]}]},
+ {"Id":"SWD\\IPP\\E3248000-80CE-11DB-8000-0011223344AA","Props":[{"Key":"DEVPKEY_Device_FriendlyName","Values":["Brother MFC-L3780CDW series"]},{"Key":"{87B5D949-B013-46FE-8410-01D2B5474B7B} 17","Values":["https://10.0.0.67:443/ipp/print"]},{"Key":"{A35996AB-11CF-4935-8B61-A6761081ECDF} 12","Values":["http://10.0.0.67:631/ipp/print"]}]},
+ {"Id":"SWD\\IPP\\CFE92100-67C4-11D4-A45F-F8D027ACE49D","Props":[{"Key":"DEVPKEY_Device_FriendlyName","Values":["EPSON L575 Series"]},{"Key":"{A35996AB-11CF-4935-8B61-A6761081ECDF} 12","Values":["http://10.0.0.170:631/ipp/print"]}]},
+ {"Id":"SWD\\PRINTENUM\\WSD-99999999-0000-0000-0000-000000000001","Props":[{"Key":"DEVPKEY_Device_Parent","Values":["SWD\\DAFWSDPROVIDER\\urn:uuid:aaaa-bbbb"]}]},
+ {"Id":"SWD\\DAFWSDPROVIDER\\urn:uuid:aaaa-bbbb","Props":[{"Key":"DEVPKEY_Device_FriendlyName","Values":["Brother MFC-J6945DW"]},{"Key":"{X} 4","Values":["Location: http://10.0.0.88:80/WebServices/Device"]}]},
+ {"Id":"SWD\\DAFWSDPROVIDER\\urn:uuid:cccc-dddd","Props":[{"Key":"DEVPKEY_Device_FriendlyName","Values":["Brother HL-L8360CDW series"]},{"Key":"DEVPKEY_PNPX_IpAddress","Values":["10.0.0.99"]}]},
+ {"Id":"HTREE\\ROOT\\0"}
+],
+"Neighbors":[
+ {"IP":"239.255.255.250","MAC":"01-00-5E-7F-FF-FA"},
+ {"IP":"10.0.0.31","MAC":"A1-B2-C3-D4-E5-F6"},
+ {"IP":"10.0.0.104","MAC":"B4-22-00-00-AA-01"}
+]}
