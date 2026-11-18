@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 
 	"github.com/AEROGU/pagemeter/internal/config"
@@ -36,6 +37,8 @@ func (u *UI) abrirFormulario(ipEditar string) {
 	resultado := tview.NewTextView().SetDynamicColors(true).SetWrap(true)
 	resultado.SetBorder(true).SetTitle(" Prueba ")
 	resultado.SetText("[gray]Pulsa «Probar» para comprobar que la impresora responde por SNMP.")
+	// Si un clic deja el foco en este panel, cualquier tecla de salida vuelve al formulario.
+	resultado.SetDoneFunc(func(tcell.Key) { u.app.SetFocus(form) })
 
 	form.AddInputField("IP", orig.IP, 20, nil, nil)
 	form.AddInputField("Nombre (opcional)", orig.Nombre, 50, nil, nil)
@@ -133,6 +136,7 @@ func (u *UI) abrirFormulario(ipEditar string) {
 		u.pages.RemovePage(pgFormulario)
 	}
 	u.pages.AddPage(pgFormulario, centro, true, true)
+	u.dialogoActual = caja
 	u.app.SetFocus(form)
 	u.actualizarBarras()
 }

@@ -123,7 +123,7 @@ func TestFlujoCompleto(t *testing.T) {
 	p, cfg := arrancar(t)
 
 	// 1. Pantalla de impresoras.
-	p.esperar("Impresoras (2, 2 habilitadas)", "[b4220000aa01]", "10.0.0.2", "sin lecturas", "Espacio marcar")
+	p.esperar("Impresoras (2, 2 habilitadas)", "[b4220000aa01]", "10.0.0.2", "sin lecturas", "Instaladas")
 
 	// 2. Escanear: termina en el detalle del último escaneo.
 	p.tecla('s')

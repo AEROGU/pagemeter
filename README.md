@@ -46,6 +46,9 @@ schtasks /Create /TN "pagemeter" /SC DAILY /ST 08:00 /TR "C:\pagemeter\pagemeter
 
 `1`–`4` cambian de pantalla, `Q` o `Ctrl+C` salen.
 
+También funciona con el mouse: clic en pestañas, filas, casillas, botones y en los comandos de la
+barra inferior, y rueda para desplazarse. Para seleccionar texto de la consola, mantén `Shift` al arrastrar.
+
 | Pantalla | Teclas |
 |---|---|
 | 1 Impresoras | `Espacio` marcar · `I` releer instaladas · `A` agregar por IP · `R` buscar en la red · `E` editar · `Supr` eliminar · `P` probar · `S` escanear |

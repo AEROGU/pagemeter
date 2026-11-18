@@ -38,20 +38,10 @@ var pestanas = []struct{ tecla, pagina, titulo string }{
 	{"4", pgHistorial, "Historial"},
 }
 
-var ayudas = map[string]string{
-	pgImpresoras: "Espacio marcar · I instaladas · A agregar IP · R buscar en red · E editar · Supr eliminar · P probar · S escanear",
-	pgEscanear:   "S escanear habilitadas · Esc cancelar escaneo",
-	pgDetalle:    "↑↓ impresora · O OIDs crudos · S escanear",
-	pgHistorial:  "Espacio/M marcar (2) · D diferencia · F filtrar · Tab cambiar panel · R recargar",
-	pgFormulario: "Tab siguiente campo · Enter en botón · Esc cancelar",
-	pgRed:        "Enter elegir red · Espacio marcar · G agregar marcadas · Esc volver/cancelar",
-}
-
-const ayudaGlobal = "1-4 pantallas · Q salir"
-
 // UI es la aplicación.
 type UI struct {
 	app    *tview.Application
+	raiz   *tview.Flex
 	pages  *tview.Pages
 	header *tview.TextView
 	status *tview.TextView
@@ -67,6 +57,11 @@ type UI struct {
 	estado      map[string]string // IP → texto de la última lectura (con colores)
 	ultimo      *escaneo.Resultado
 	paginaPrinc string // última pestaña principal visitada
+
+	anchoBarra    int             // ancho de pantalla usado en la barra de comandos
+	zonasHeader   []zona          // pestañas clicables
+	zonasFooter   []zona          // comandos clicables
+	dialogoActual tview.Primitive // caja del diálogo o formulario abierto
 
 	imp  *pantallaImpresoras
 	esc  *pantallaEscanear
@@ -98,6 +93,10 @@ func New(cfg *config.Config, reg *counters.Registro, dial snmp.Dialer) *UI {
 	}
 	u.ctx, u.cancel = context.WithCancel(context.Background())
 	u.footer.SetBackgroundColor(tcell.ColorDarkBlue)
+	u.footer.SetWrap(false)
+	u.header.SetMouseCapture(capturaBarra(u.header, u.clicHeader))
+	u.status.SetMouseCapture(capturaBarra(u.status, nil))
+	u.footer.SetMouseCapture(capturaBarra(u.footer, u.clicFooter))
 
 	u.imp = newPantallaImpresoras(u)
 	u.esc = newPantallaEscanear(u)
@@ -113,12 +112,16 @@ func New(cfg *config.Config, reg *counters.Registro, dial snmp.Dialer) *UI {
 	u.pages.SetChangedFunc(u.actualizarBarras)
 	u.paginaPrinc = pgImpresoras
 
-	raiz := tview.NewFlex().SetDirection(tview.FlexRow).
+	u.raiz = tview.NewFlex().SetDirection(tview.FlexRow).
 		AddItem(u.header, 1, 0, false).
 		AddItem(u.pages, 0, 1, true).
 		AddItem(u.status, 1, 0, false).
 		AddItem(u.footer, 1, 0, false)
-	u.app.SetRoot(raiz, true).SetInputCapture(u.teclasGlobales)
+	u.app.SetRoot(u.raiz, true).
+		SetInputCapture(u.teclasGlobales).
+		SetMouseCapture(u.capturaMouse).
+		SetBeforeDrawFunc(u.antesDeDibujar).
+		EnableMouse(true)
 	u.actualizarBarras()
 	return u
 }
@@ -190,7 +193,7 @@ func (u *UI) escribiendo() bool {
 		return true
 	}
 	switch u.app.GetFocus().(type) {
-	case *tview.InputField, *tview.DropDown, *tview.Button, *tview.Checkbox:
+	case *tview.InputField, *tview.TextArea, *tview.DropDown, *tview.Button, *tview.Checkbox: // al hacer clic en un InputField el foco queda en su TextArea interno
 		return true
 	}
 	return false
@@ -222,28 +225,6 @@ func (u *UI) ir(pagina string) {
 	u.actualizarBarras()
 }
 
-func (u *UI) actualizarBarras() {
-	front, _ := u.pages.GetFrontPage()
-	var b strings.Builder
-	b.WriteString("[::b]pagemeter[::-] ")
-	for _, p := range pestanas {
-		if p.pagina == u.paginaPrinc {
-			fmt.Fprintf(&b, " [black:aqua] %s %s [-:-:-]", p.tecla, p.titulo)
-		} else {
-			fmt.Fprintf(&b, "  [aqua]%s[-] %s ", p.tecla, p.titulo)
-		}
-	}
-	u.header.SetText(b.String())
-	ayuda := ayudas[front]
-	if front == pgModal {
-		ayuda = "Enter aceptar · Tab/←→ cambiar botón"
-	}
-	if front != pgFormulario && front != pgModal {
-		ayuda += " · " + ayudaGlobal
-	}
-	u.footer.SetText(" " + ayuda)
-}
-
 // aviso pone un mensaje en la línea de estado (acepta etiquetas de color).
 func (u *UI) aviso(formato string, args ...any) {
 	u.status.SetText(" " + fmt.Sprintf(formato, args...))
@@ -261,6 +242,14 @@ func (u *UI) mensaje(texto string) {
 		u.actualizarBarras()
 	}
 	btn.SetSelectedFunc(cerrar)
+	// Un clic puede dejar el foco en el texto: desde ahí también se cierra o se vuelve.
+	tv.SetDoneFunc(func(k tcell.Key) {
+		if k == tcell.KeyEscape || k == tcell.KeyEnter {
+			cerrar()
+			return
+		}
+		u.app.SetFocus(btn)
+	})
 	btn.SetInputCapture(func(ev *tcell.EventKey) *tcell.EventKey {
 		switch ev.Key() {
 		case tcell.KeyEscape:
@@ -294,6 +283,7 @@ func (u *UI) mensaje(texto string) {
 		u.pages.RemovePage(pgModal)
 	}
 	u.pages.AddPage(pgModal, centro, true, true)
+	u.dialogoActual = caja
 	u.app.SetFocus(btn)
 	u.actualizarBarras()
 }
@@ -321,6 +311,7 @@ func (u *UI) dialogo(texto string, botones []string, fn func(int)) {
 		u.pages.RemovePage(pgModal)
 	}
 	u.pages.AddPage(pgModal, m, false, true)
+	u.dialogoActual = m
 	u.app.SetFocus(m)
 	u.actualizarBarras()
 }

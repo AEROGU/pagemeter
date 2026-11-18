@@ -50,7 +50,11 @@ func (p *pantallaImpresoras) refrescar() {
 			casilla = "[x]"
 		}
 		r := i + 1
-		p.tabla.SetCell(r, 0, celda(casilla).SetTextColor(tcell.ColorAqua))
+		p.tabla.SetCell(r, 0, celda(casilla).SetTextColor(tcell.ColorAqua).SetClickedFunc(func() bool {
+			p.tabla.Select(r, 0)
+			p.alternar()
+			return true
+		}))
 		p.tabla.SetCell(r, 1, celda(pr.Etiqueta()).SetExpansion(1))
 		p.tabla.SetCell(r, 2, celda(pr.IP))
 		p.tabla.SetCell(r, 3, celda(pr.Marca))

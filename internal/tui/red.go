@@ -229,7 +229,11 @@ func (p *pantallaRed) pintarTabla() {
 		default:
 			color = tcell.ColorGray
 		}
-		p.tabla.SetCell(r, 0, celda(casilla).SetTextColor(tcell.ColorAqua))
+		p.tabla.SetCell(r, 0, celda(casilla).SetTextColor(tcell.ColorAqua).SetClickedFunc(func() bool {
+			p.tabla.Select(r, 0)
+			p.alternarSeleccionada()
+			return true
+		}))
 		p.tabla.SetCell(r, 1, celda(x.IP).SetTextColor(color))
 		p.tabla.SetCell(r, 2, celda(x.Modelo).SetTextColor(color))
 		p.tabla.SetCell(r, 3, celda(recortar(x.SysDescr, 60)).SetTextColor(color).SetExpansion(1))
@@ -263,17 +267,21 @@ func (p *pantallaRed) teclasTabla(ev *tcell.EventKey) *tcell.EventKey {
 			p.u.app.SetFocus(p.redes)
 		}
 	case ev.Key() == tcell.KeyRune && ev.Rune() == ' ':
-		row, _ := p.tabla.GetSelection()
-		if i := row - 1; i >= 0 && i < len(p.res) && !p.res[i].registrada {
-			p.res[i].marcada = !p.res[i].marcada
-			p.pintarTabla()
-		}
+		p.alternarSeleccionada()
 	case esTecla(ev, "gG"), ev.Key() == tcell.KeyEnter:
 		p.agregar()
 	default:
 		return ev
 	}
 	return nil
+}
+
+func (p *pantallaRed) alternarSeleccionada() {
+	row, _ := p.tabla.GetSelection()
+	if i := row - 1; i >= 0 && i < len(p.res) && !p.res[i].registrada {
+		p.res[i].marcada = !p.res[i].marcada
+		p.pintarTabla()
+	}
 }
 
 func (p *pantallaRed) agregar() {

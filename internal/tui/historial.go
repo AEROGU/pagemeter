@@ -116,17 +116,22 @@ func (p *pantallaHistorial) marcado(id string) int {
 func (p *pantallaHistorial) pintarEscaneos() {
 	row, _ := p.escaneos.GetSelection()
 	p.escaneos.Clear()
-	encabezado(p.escaneos, " ", "Fecha", "Impresoras")
+	encabezado(p.escaneos, "   ", "Fecha", "Impresoras")
 	for i, e := range p.vista {
-		m := " "
+		m := "[ ]"
 		if k := p.marcado(e.ID); k >= 0 {
-			m = []string{"A", "B"}[k]
+			m = []string{"[A]", "[B]"}[k]
 		}
+		fila := i + 1
 		imp := fmt.Sprintf("%d ok", e.OK())
 		if e.Errores() > 0 {
 			imp += fmt.Sprintf(", [red]%d error[-]", e.Errores())
 		}
-		p.escaneos.SetCell(i+1, 0, celda(m).SetTextColor(tcell.ColorAqua))
+		p.escaneos.SetCell(i+1, 0, celda(m).SetTextColor(tcell.ColorAqua).SetClickedFunc(func() bool {
+			p.escaneos.Select(fila, 0)
+			p.marcar()
+			return true
+		}))
 		p.escaneos.SetCell(i+1, 1, celda(e.Fecha.Format(store.FormatoFecha)))
 		p.escaneos.SetCell(i+1, 2, tview.NewTableCell(imp))
 	}
