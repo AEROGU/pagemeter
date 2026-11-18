@@ -69,7 +69,12 @@ func run(args []string, out, errOut io.Writer, dial snmp.Dialer) int {
 		defer stop()
 		return escanear(ctx, cfg, registro(), dial, out, errOut)
 	}
-	if err := tui.New(cfg, registro(), dial).Run(); err != nil {
+	ui := tui.New(cfg, registro(), dial)
+	if err := ui.UsarConsolaWindows(); err != nil {
+		fmt.Fprintln(errOut, "Error:", err)
+		return salidaGeneral
+	}
+	if err := ui.Run(); err != nil {
 		fmt.Fprintln(errOut, "Error en la interfaz:", err)
 		return salidaGeneral
 	}
